@@ -1,0 +1,358 @@
+﻿@{
+    Layout = "";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>BPMN Editor</title>
+    <!-- Copyright 1998-2021 by Northwoods Software Corporation. -->
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+    <link href="~/css/BPMN.css" rel="stylesheet" />
+    <script src="~/lib/signalr/dist/browser/signalr.js"></script>
+    <script src="~/js/require.js"></script>
+
+    <style>
+            #accordion {
+                min-height: 430px;
+                height: 430px !important;
+            }
+
+
+            /*#region Loader */
+            .loader {
+                color: #921919;
+                position: fixed;
+                box-sizing: border-box;
+                left: -9999px;
+                top: -9999px;
+                width: 0;
+                height: 0;
+                overflow: hidden;
+                z-index: 999999;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+                .loader.is-active {
+                    background-color: rgba(0, 0, 0, 0.41);
+                    width: 100%;
+                    height: 100%;
+                    left: 0;
+                    top: 0;
+                }
+
+
+            .loader-default:after {
+                content: "";
+                position: fixed;
+                width: 48px;
+                height: 48px;
+                border: 8px solid #ffffff;
+                border-left-color: transparent;
+                border-radius: 50%;
+                top: calc(50% - 24px);
+                left: calc(50% - 24px);
+                animation: rotation 1s linear infinite;
+            }
+
+            .loader:after, .loader:before {
+                box-sizing: border-box;
+                display: none;
+            }
+
+            .loader > .fondo-loading {
+                /*background: white;*/
+                width: 100%;
+                text-align: center;
+                height: 200px;
+                opacity: 1;
+            }
+
+                .loader > .fondo-loading > img {
+                    /*height: 180px;
+        width: auto;*/
+                    height: 200px;
+                    width: 220px;
+                }
+
+
+            .loader.is-active {
+                /*background: white;*/
+            }
+
+            .fondo-loading {
+                width: 200px !important;
+                height: 150px !important;
+                /*border: 3px solid #df3e4e;*/
+                border-radius: 15px;
+                background: #f8f8f8;
+                box-shadow: 0 0 30px #edefee;
+            }
+
+            .head-loading {
+                height: 30px;
+                width: 100%;
+                background: #0a78c5 /*#df3e4e*/;
+                border-radius: 10px 10px 0px 0px;
+                color: white;
+                font-size: 20px;
+            }
+
+            .fondo-loading {
+                width: 500px !important;
+                height: 250px !important;
+                border-radius: 3px;
+                padding: 10px;
+            }
+
+            /*#endregion */
+
+        .btn-formulario {
+            padding: 10px;
+            border-color: #0e4479;
+            background: #009688;
+            color: white;
+            cursor:pointer;
+            margin-left: 10px;
+        }
+
+            .btn-formulario:hover {
+                font-weight: bold;            
+                margin: 0px;
+                margin-left: 10px;
+            }
+
+        #myDiagramDiv {
+            height: 650px;
+        }
+
+        #myOverviewDiv {
+            height: 200px;
+        }
+
+        .loader.is-active {
+            background: white;
+        }
+        #currentFile {
+            background: #686666;
+        }
+
+        .ui-accordion .ui-accordion-header {
+            background: #686666;
+        }
+    </style>
+
+
+    <script>
+        var pathGeneric = '@(Startup.appUrlHub)';
+        function init() {
+            require([pathGeneric + "/js/BPMNScript.js"], function (app) {
+                app.init();
+                //document.getElementById("newDocument").onclick = app.newDocument;
+
+                document.getElementById("obtener").onclick = app.GetJson;
+
+            });
+        }
+
+        function RespuestaJson(pJson) {
+
+
+        }
+
+        function ChangeFinishedJson(pJson) {
+            document.getElementById("pJsonValue").value = pJson;
+
+            let nombre_usuario = document.getElementById("nombre_usuario").value;
+            connection.invoke("EnviarCambio", pJson, nombre_usuario).catch(function (err) {
+                return console.error(err.toString());
+            });
+        }
+
+    </script>
+
+    @*<script src="~/lib/signalr/dist/browser/signalr.js"></script>*@
+    <script>
+
+        var connection = new signalR.HubConnectionBuilder().withUrl("@(Startup.appUrlHub)/cliente").build();
+        connection.serverTimeoutInMilliseconds = 1800000; // 30 min
+
+        //connection.start().then(async function () {
+        //    await connection.invoke("ObtenerJsonActual").catch(function (err) {
+        //        return console.error(err.toString());
+        //    });
+
+        //}).catch(function (err) {
+        //    return console.error("ERROR SIGNALER: " + err.toString());
+        //});
+
+        connection.on("JsonActual", function (pJson, nombre_usuario) {
+            document.getElementById("pJsonValue").value = pJson;
+
+            document.getElementById("obtener").click();
+        });
+
+        function Conectar() {
+            document.getElementById("loader").style.display = 'none';
+            document.getElementById("nombre_usuario").value = document.getElementById("nombre_usuario2").value;
+            connection.start().then(async function () {
+                await connection.invoke("ObtenerJsonActual").catch(function (err) {
+                    return console.error(err.toString());
+                });
+
+            }).catch(function (err) {
+                return console.error("ERROR SIGNALER: " + err.toString());
+            });
+        }
+
+        function LimpiarJson() {
+            let json = { "class": "GraphLinksModel", "nodeDataArray": [], "linkDataArray": [] };
+            pJson = JSON.stringify(json);
+
+            document.getElementById("pJsonValue").value = pJson;
+            document.getElementById("obtener").click();
+
+            let nombre_usuario = document.getElementById("nombre_usuario").value;
+            connection.invoke("EnviarCambio", pJson, nombre_usuario).catch(function (err) {
+                return console.error(err.toString());
+            });
+        }
+
+        function ExportarJson() {
+            let storageObj = document.getElementById("pJsonValue").value;
+
+            var dataStr = "data:application/json;charset=utf-8," + encodeURIComponent(JSON.stringify(storageObj));
+            var dlAnchorElem = document.getElementById('downloadAnchorElem');
+            dlAnchorElem.setAttribute("href", dataStr);
+            dlAnchorElem.setAttribute("download", "backup.json");
+            dlAnchorElem.click();
+        }
+
+        function ImportarJson() {
+            document.getElementById('fileUpload').click();
+        }
+
+        function SeleccionoJson() {
+
+            var file = document.getElementById("fileUpload").files[0];
+            if (file) {
+                var reader = new FileReader();
+                reader.readAsText(file);
+                reader.onload = function (evt) {
+                    let json = JSON.parse(evt.target.result);
+                    console.log(json);
+
+                    document.getElementById("pJsonValue").value = json;
+                    document.getElementById("obtener").click();
+
+                    let nombre_usuario = document.getElementById("nombre_usuario").value;
+                    connection.invoke("EnviarCambio", json, nombre_usuario).catch(function (err) {
+                        return console.error(err.toString());
+                    });
+
+                }
+                reader.onerror = function (evt) {
+                    alert("error reading file");
+                }
+            }
+
+            document.getElementById("fileUpload").value = '';
+
+        }
+
+    </script>
+
+
+</head>
+<body onload="init()">
+
+    <div id="loader" class="loader loader-default is-active" style="display:flex;">
+
+        <div class="fondo-loading">
+
+            <p style=" background: #686666; padding: 10px; margin: 0px; color: white;">INGRESAR!</p>
+            <h5 style="text-align:left;margin-bottom: 0px; color: black;">Nombre:</h5>
+            <input type="text" id="nombre_usuario2" placeholder="Nombre..." style="text-align: left" />
+
+            <br />
+
+            <h5 style="text-align:left;margin-bottom: 0px; color: black;">Correo:</h5>
+            <input type="text" placeholder="Correo..." style="text-align: left" />
+
+            <br /><br />
+            <button class="btn-formulario" onclick="Conectar()">CONECTAR</button>
+            <button class="btn-formulario" style="background: #f44336;" onclick="window.location.reload()">ACTUALIZAR</button>
+        </div>
+    </div>
+
+    <div>
+        <a id="downloadAnchorElem" style="display:none"></a>
+        <input type="file" class="form-control-file" id="fileUpload" name="fileUpload" style="display:none" accept="application/json" onchange="SeleccionoJson()" />
+
+
+        <div>
+            <input type="hidden" id="nombre_usuario" placeholder="Nombre de usuario..." />
+        </div>
+        <div id="currentFile">Software 1</div>
+        <ul id="menuui">
+            <li>
+                <button class="btn-formulario" onclick="LimpiarJson()">LIMPIAR</button>
+            </li>
+            <li>
+                <button class="btn-formulario" onclick="ImportarJson()">IMPORTAR</button>
+            </li>
+            <li>
+                <button class="btn-formulario" onclick="ExportarJson()">EXPORTAR</button>
+            </li>
+        </ul>
+    </div>
+    <!--END menu bar -->
+    <!-- Styling for this portion is in BPMN.css -->
+    <div id="PaletteAndDiagram">
+
+        <div id="myDiagramDiv"></div>
+        <div id="sideBar">
+            <span style="display: inline-block; vertical-align: top; padding: 5px; width:100%">
+                <div id="accordion">
+                    <h4>Componentes</h4>
+                    <div>
+                        <div id="myPaletteLevel1" class="myPaletteDiv"></div>
+                    </div>
+                </div>
+            </span>
+            <div id="myOverviewDiv"></div>
+        </div>
+    </div>
+
+    <div id="openDocument" class="draggable">
+        <div id="openDraggableHandle" class="handle">Open File</div>
+        <div id="openText" class="elementText">Choose file to open...</div>
+        <select id="mySavedFiles" class="mySavedFiles"></select>
+        <br />
+        <button id="openBtn" class="elementBtn" type="button" style="margin-left: 70px">Open</button>
+        <button id="cancelBtn" class="elementBtn" type="button">Cancel</button>
+    </div>
+
+    <div id="removeDocument" class="draggable">
+        <div id="removeDraggableHandle" class="handle">Delete File</div>
+        <div id="removeText" class="elementText">Choose file to remove...</div>
+        <select id="mySavedFiles2" class="mySavedFiles"></select>
+        <br />
+        <button id="removeBtn" class="elementBtn" type="button" style="margin-left: 70px">Remove</button>
+        <button id="cancelBtn2" class="elementBtn" type="button">Cancel</button>
+    </div>
+
+
+    <button id="obtener" style="display:none">PRUEBA</button>
+
+    <input type="hidden" id="pJsonValue" value="" />
+
+
+</body>
+</html>
