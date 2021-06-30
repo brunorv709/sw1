@@ -11,7 +11,7 @@ using wSoftware1.Hubs;
 
 namespace wSoftware1
 {
-    public class Startup
+    public class Startup 
     {
         public static string appUrlHub = "";
 

@@ -1,25 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\PC\\Desktop\\wSoftware1\\wSoftware1.csproj": {}
+    "C:\\Users\\billy\\Source\\Repos\\brunorv709\\sw1\\wSoftware1.csproj": {}
   },
   "projects": {
-    "C:\\Users\\PC\\Desktop\\wSoftware1\\wSoftware1.csproj": {
+    "C:\\Users\\billy\\Source\\Repos\\brunorv709\\sw1\\wSoftware1.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\PC\\Desktop\\wSoftware1\\wSoftware1.csproj",
+        "projectUniqueName": "C:\\Users\\billy\\Source\\Repos\\brunorv709\\sw1\\wSoftware1.csproj",
         "projectName": "wSoftware1",
-        "projectPath": "C:\\Users\\PC\\Desktop\\wSoftware1\\wSoftware1.csproj",
-        "packagesPath": "C:\\Users\\PC\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\PC\\Desktop\\wSoftware1\\obj\\",
+        "projectPath": "C:\\Users\\billy\\Source\\Repos\\brunorv709\\sw1\\wSoftware1.csproj",
+        "packagesPath": "C:\\Users\\billy\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\billy\\Source\\Repos\\brunorv709\\sw1\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\PC\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\billy\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -27,7 +25,8 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "https://api.nuget.org/v3/index.json": {}
+          "https://api.nuget.org/v3/index.json": {},
+          "https://nuget.telerik.com/nuget": {}
         },
         "frameworks": {
           "net5.0": {
@@ -80,7 +79,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.301\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.104\\RuntimeIdentifierGraph.json"
         }
       }
     }
